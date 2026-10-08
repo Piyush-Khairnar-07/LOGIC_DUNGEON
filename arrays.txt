@@ -1,0 +1,150 @@
+
+        const sacredKeyPalette = {
+            'x': 0x111111, 'f': 0x3a3a3a, 'd': 0x5a4a2a, 'g': 0xa98929, 'y': 0xffcc00, 'w': 0xffffff, 'i': 0xffeaa, 'a': 0xe8e8d8, 'b': 0x222222, 'o': 0x1a1a1a
+        };
+        const sacredKeyOn = [
+            ".....fffffffffff.....",
+            "...fffbbbbbbbbbfff...",
+            "..ffboiyiyiyiyiobff..",
+            ".fbbibbbbbbbbbbbibbf.",
+            ".fbibbaaayyyaaabbibf.",
+            "fbiybawwwwywwwwabyibf",
+            "fbibbawwwyyywwwabbibf",
+            "fbibbaaawwwwwaaabbibf",
+            "fbiybbaaaawaaaabbyibf",
+            "fbibbbbbbbwbbbbbbbibf",
+            "fbiybbbbbbwbbbbbbyibf",
+            "fbibbbbbbbwbbbbbbbibf",
+            "fbiybbbbbbwbbbbbbyibf",
+            "fbibbbbbbbwbbbbbbbibf",
+            "fbiybbbbbbwbbbbbbyibf",
+            "fbibbbbbbbwbbbbbbbibf",
+            ".fbibbbbbbbbbbbbbibf.",
+            ".fbbibbbbbbbbbbbibbf.",
+            "..ffboiyiyiyiyiobff..",
+            "...fffbbbbbbbbbfff...",
+            ".....fffffffffff....."
+        ];
+        const sacredKeyOff = [
+            ".....fffffffffff.....",
+            "...fffbbbbbbbbbfff...",
+            "..ffbodgdgdgdgdobff..",
+            ".fbbgbbbbbbbbbbbgbbf.",
+            ".fbgbbaadddddaabbgbf.",
+            "fbdgbaddddgddddabgdbf",
+            "fbbgbadddgggdddabgbbf",
+            "fbbgbaaadddddaaabgbbf",
+            "fbdgbbaaaadaaaabbgdbf",
+            "fbbgbbbbbbdbbbbbbgbbf",
+            "fbdgbbbbbbdbbbbbbgdbf",
+            "fbbgbbbbbbdbbbbbbgbbf",
+            "fbdgbbbbbbdbbbbbbgdbf",
+            "fbbgbbbbbbdbbbbbbgbbf",
+            "fbdgbbbbbbdbbbbbbgdbf",
+            "fbbgbbbbbbdbbbbbbgbbf",
+            ".fbbgbbbbbbbbbbbgbbf.",
+            ".fbbgbbbbbbbbbbbgbbf.",
+            "..ffbodgdgdgdgdobff..",
+            "...fffbbbbbbbbbfff...",
+            ".....fffffffffff....."
+        ];
+
+        const bellPalette = {
+            'x': 0x111111, 'f': 0x333333, 'd': 0x4a3a2a, 'g': 0x997733, 'y': 0xeeaa22, 'w': 0xffdd77, 'i': 0xffcc44, 'a': 0xdcbbaa, 'b': 0x181818, 'o': 0x111111
+        };
+        const bellOn = [
+            ".....fffffffffff.....",
+            "...fffbbbbbbbbbfff...",
+            "..ffboiyiyiyiyiobff..",
+            ".fbbibbbbbbbbbbbibbf.",
+            ".fbibbbbawwwabbbbibf.",
+            "fbiybbbaawwwaabbbyibf",
+            "fbibbbbaawwwaabbbbibf",
+            "fbibbaaaawwwaaaabbibf",
+            "fbiybaawwwwwwwaabyibf",
+            "fbibbawwwwwwwwwabbibf",
+            "fbiybwwwwwwwwwwwbyibf",
+            "fbibbwwwwwywwwwwbbibf",
+            "fbiybwwyyyyyyywwbyibf",
+            "fbibbbbbbwywbbbbbbibf",
+            "fbiybbbbbbybbbbbbyibf",
+            "fbibbbbbbbbbbbbbbbibf",
+            ".fbibbbbbbbbbbbbbibf.",
+            ".fbbibbbbbbbbbbbibbf.",
+            "..ffboiyiyiyiyiobff..",
+            "...fffbbbbbbbbbfff...",
+            ".....fffffffffff....."
+        ];
+        const bellOff = [
+            ".....fffffffffff.....",
+            "...fffbbbbbbbbbfff...",
+            "..ffbodgdgdgdgdobff..",
+            ".fbbgbbbbbbbbbbbgbbf.",
+            ".fbgbbbbadgdabbbbgbf.",
+            "fbdgbbbaadgdaabbbgdbf",
+            "fbbgbbbaadgdaabbbgbbf",
+            "fbbgbaaaadgdaaaabgbbf",
+            "fbdgbaadddddddaabgdbf",
+            "fbbgbadddddddddabgbbf",
+            "fbdgbdddddddddddbgdbf",
+            "fbbgbdddddgdddddbgbbf",
+            "fbdgbddgggggggddbgdbf",
+            "fbbgbbbbbbdbbbbbbgbbf",
+            "fbdgbbbbbbgbbbbbbgdbf",
+            "fbbgbbbbbbbbbbbbbgbbf",
+            ".fbbgbbbbbbbbbbbgbbf.",
+            ".fbbgbbbbbbbbbbbgbbf.",
+            "..ffbodgdgdgdgdobff..",
+            "...fffbbbbbbbbbfff...",
+            ".....fffffffffff....."
+        ];
+
+        const shadowCursePalette = {
+            'x': 0x080808, 'f': 0x1c1c1c, 'b': 0x0f0f0f, 'c': 0x2a2a2a, 's': 0x000000, 'o': 0x200030, 'd': 0x330055, 'p': 0x6600aa, 'v': 0x9933ff, 'w': 0xffffff, 'r': 0xff0000
+        };
+        const shadowCurseOn = [
+            ".....fffffffffff.....",
+            "...fffbbbbbbbbbfff...",
+            "..ffbovpvopovpvobff..",
+            ".fbvbbbbbbbbbbbbbvbf.",
+            ".fbpbcscccscccscbpbf.",
+            "fbvbbbbbbbbbbbbbbbvbf",
+            "fbpbbbdddddddddbbbpbf",
+            "fbpbbdpppvvvpppdbbpbf",
+            "fbvbdpvvwwwwwvvpdbvbf",
+            "fbpbvpvwrrrrrwvpvbpbf",
+            "fbvbvvwrrrrrrrwvvbvbf",
+            "fbpbvpvwrrrrrwvpvbpbf",
+            "fbvbdpvvwwwwwvvpdbvbf",
+            "fbpbbdpppvvvpppdbbpbf",
+            "fbvbbbdddddddddbbbvbf",
+            "fbpbbbbbbbbbbbbbbbpbf",
+            ".fbpbscscscscscsbpbf.",
+            ".fbvbbbbbbbbbbbbbvbf.",
+            "..ffbovpvopovpvobff..",
+            "...fffbbbbbbbbbfff...",
+            ".....fffffffffff....."
+        ];
+        const shadowCurseOff = [
+            ".....fffffffffff.....",
+            "...fffbbbbbbbbbfff...",
+            "..ffbodododododobff..",
+            ".fbdbbbbbbbbbbbbbdbf.",
+            ".fbobcscccscccscbobf.",
+            "fbdbbbbbbbbbbbbbbbdbf",
+            "fbobbbbbbbbbbbbbbbobf",
+            "fbobbbdddddddddbbbobf",
+            "fbdbbddpppppppddbbdbf",
+            "fbobbddpprrrppddbbobf",
+            "fbdbbddpppppppddbbdbf",
+            "fbobbbdddddddddbbbobf",
+            "fbdbbbbbbbbbbbbbbbdbf",
+            "fbobbbbbbbbbbbbbbbobf",
+            "fbdbbbbbbbbbbbbbbbdbf",
+            "fbobbbbbbbbbbbbbbbobf",
+            ".fbobscscscscscsbobf.",
+            ".fbdbbbbbbbbbbbbbdbf.",
+            "..ffbodododododobff..",
+            "...fffbbbbbbbbbfff...",
+            ".....fffffffffff....."
+        ];

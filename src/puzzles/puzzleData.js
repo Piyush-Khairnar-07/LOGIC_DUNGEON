@@ -58,13 +58,13 @@ export const puzzles = {
     oath_guardian_03: {
         id: 'oath_guardian_03',
         title: 'The Oath of the Guardian',
-        question: 'The Guardian Key demands the Sacred Bell.\nThe Shadow Curse must remain absent.',
+        question: 'Whenever the Sacred Key is awakened,\nthe Guardian Bell must also be awakened.\nThe Shadow Curse must remain dormant.',
         expressionLabel: '(P → Q) ∧ ¬R',
         variables: ['P', 'Q', 'R'],
         expression: AND(IMPLIES(V('P'), V('Q')), NOT(V('R'))),
-        variableNames: { P: 'Guardian Key', Q: 'Sacred Bell', R: 'Shadow Curse' },
-        successMessage: 'The oath is fulfilled.',
-        failMessage: 'The oath is broken.',
+        variableNames: { P: 'Sacred Key Rune', Q: 'Guardian Bell Rune', R: 'Shadow Curse Rune' },
+        successMessage: 'The Guardian accepts your oath.',
+        failMessage: 'The oath is broken:\nwhenever the Sacred Key is active,\nthe Guardian Bell must also be active.',
         hints: [
             'P → Q is FALSE only when P is TRUE and Q is FALSE.',
             'If the Key is active, the Bell must also be active.',

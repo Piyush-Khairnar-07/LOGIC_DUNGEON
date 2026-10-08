@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SoundSynth } from '../utils/SoundSynth.js';
 
 export default class LevelIntroSystem {
     constructor(scene, introData, onComplete) {
@@ -48,6 +49,8 @@ export default class LevelIntroSystem {
             if (this.onComplete) this.onComplete();
             return;
         }
+
+        SoundSynth.intro();
 
         const t = this.scene.tweens;
 

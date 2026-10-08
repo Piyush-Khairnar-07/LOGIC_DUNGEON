@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { createPixelTexture } from '../utils/PixelArt.js';
+import { SoundSynth } from '../utils/SoundSynth.js';
 
 export default class BooleanBulb extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, variable, initialValue = false, customName = null) {
@@ -201,24 +202,162 @@ export default class BooleanBulb extends Phaser.Physics.Arcade.Sprite {
             "...xxxxxxxxx..."
         ];
 
-        if (customName && customName.includes('Flame Rune')) {
+        const sacredKeyPalette = {
+            'x': 0x221100, 'b': 0x442200, 'g': 0xcc9900, 'y': 0xffcc00, 'w': 0xffffff, 'd': 0x332200, 'k': 0xffaa00, 'p': 0x111100
+        };
+        const sacredKeyOn = [
+            "...xxxxxxxxx...",
+            "..xxbbbbbbbxx..",
+            ".xxbbbyyybbbxx.",
+            ".xbbbyywywbbbx.",
+            "xxbbyywwwyybbxx",
+            "xbbbyywywyybbbx",
+            "xbbbbyywybbbbbx",
+            "xbbbbyywyyybbbx",
+            "xbbbbyywybbbbbx",
+            "xbbbbyywyyybbbx",
+            "xxbbbbywybbbbxx",
+            ".xbbbbyyybbbbx.",
+            ".xxbbbbbbbbbxx.",
+            "..xxbbbbbbbxx..",
+            "...xxxxxxxxx..."
+        ];
+        const sacredKeyOff = [
+            "...xxxxxxxxx...",
+            "..xxbbbbbbbxx..",
+            ".xxbbbdddbbbxx.",
+            ".xbbbddwdwbbbx.",
+            "xxbbddwwwddbbxx",
+            "xbbbddwdwddbbbx",
+            "xbbbbddwdbbbbbx",
+            "xbbbbddwdddbbbx",
+            "xbbbbddwdbbbbbx",
+            "xbbbbddwdddbbbx",
+            "xxbbbbdwdbbbbxx",
+            ".xbbbbdddbbbbx.",
+            ".xxbbbbbbbbbxx.",
+            "..xxbbbbbbbxx..",
+            "...xxxxxxxxx..."
+        ];
+
+        const bellPalette = {
+            'x': 0x111111, 'b': 0x2b2211, 'g': 0x886622, 'y': 0xddaa44, 'w': 0xffdd88, 'd': 0x221a11, 'p': 0x050505
+        };
+        const bellOn = [
+            "...xxxxxxxxx...",
+            "..xxbbbbbbbxx..",
+            ".xxbbbyyybbbxx.",
+            ".xbbbbbybbbbbx.",
+            "xxbbbyyyyybbbxx",
+            "xbbbyywwwyybbbx",
+            "xbbbyywwwyybbbx",
+            "xbbyyywwwyyybbx",
+            "xbbyyyyyyyyybbx",
+            "xbbbbbywybbbbbx",
+            "xxbbbbbybbbbbxx",
+            ".xbbbbbbbbbbbx.",
+            ".xxbbbbbbbbbxx.",
+            "..xxbbbbbbbxx..",
+            "...xxxxxxxxx..."
+        ];
+        const bellOff = [
+            "...xxxxxxxxx...",
+            "..xxbbbbbbbxx..",
+            ".xxbbbdddbbbxx.",
+            ".xbbbbbdbbbbbx.",
+            "xxbbbdddddbbbxx",
+            "xbbbddwwwddbbbx",
+            "xbbbddwwwddbbbx",
+            "xbbddwwwdddbbbx",
+            "xbbdddddddddbbx",
+            "xbbbbbdwdbbbbbx",
+            "xxbbbbbdbbbbbxx",
+            ".xbbbbbbbbbbbx.",
+            ".xxbbbbbbbbbxx.",
+            "..xxbbbbbbbxx..",
+            "...xxxxxxxxx..."
+        ];
+
+        const shadowCursePalette = {
+            'x': 0x080808, 'b': 0x1a1a1a, 'd': 0x2a1040, 'p': 0x6600aa, 'v': 0x9933ff, 'w': 0xffffff, 'r': 0xff0000, 'g': 0x330044
+        };
+        const shadowCurseOn = [
+            "...xxxxxxxxx...",
+            "..xxbbbbbbbxx..",
+            ".xxbbbbbbbbbxx.",
+            ".xbbbdpppdbbbx.",
+            "xxbbpvvvvvpbbxx",
+            "xbbpvvwwwvvpbbx",
+            "xbpvvwwrwwvvpbx",
+            "xbpvvwrrrwwvpbx",
+            "xbpvvwwrwwvvpbx",
+            "xbbpvvwwwvvpbbx",
+            "xxbbpvvvvvpbbxx",
+            ".xbbbdpppdbbbx.",
+            ".xxbbbbbbbbbxx.",
+            "..xxbbbbbbbxx..",
+            "...xxxxxxxxx..."
+        ];
+        
+        const shadowCurseOff = [
+            "...xxxxxxxxx...",
+            "..xxbbbbbbbxx..",
+            ".xxbbbbbbbbbxx.",
+            ".xbbbdddddbbbx.",
+            "xxbbdddddddbbxx",
+            "xbbddpdddpddbbx",
+            "xbbdpppppppdbbx",
+            "xbbdppprpppdbbx",
+            "xbbdpppppppdbbx",
+            "xbbddpdddpddbbx",
+            "xxbbdddddddbbxx",
+            ".xbbbdddddbbbx.",
+            ".xxbbbbbbbbbxx.",
+            "..xxbbbbbbbxx..",
+            "...xxxxxxxxx..."
+        ];
+
+        // runeType tracks which special particle/animation type this bulb is.
+        // It CANNOT be set on 'this' here because super() has not been called yet.
+        // It is assigned to this._isFlame / this._isFrost / this._isShadow after super().
+        let runeType = null; // 'flame' | 'frost' | 'shadow' | null
+
+        if (customName && customName.includes('Sacred Key')) {
+            sealName = customName;
+            palette = sacredKeyPalette;
+            dataOn = sacredKeyOn;
+            dataOff = sacredKeyOff;
+            runeType = 'sacredKey';
+        } else if (customName && customName.includes('Guardian Bell')) {
+            sealName = customName;
+            palette = bellPalette;
+            dataOn = bellOn;
+            dataOff = bellOff;
+            runeType = 'bell';
+        } else if (customName && customName.includes('Flame Rune')) {
             sealName = customName;
             palette = flamePalette;
             dataOn = flameOn;
             dataOff = flameOff;
-            this._isFlame = true;
+            runeType = 'flame';
         } else if (customName && customName.includes('Frost Rune')) {
             sealName = customName;
             palette = frostPalette;
             dataOn = frostOn;
             dataOff = frostOff;
-            this._isFrost = true;
+            runeType = 'frost';
+        } else if (customName && customName.includes('Shadow Curse')) {
+            sealName = customName;
+            palette = shadowCursePalette;
+            dataOn = shadowCurseOn;
+            dataOff = shadowCurseOff;
+            runeType = 'shadowCurse';
         } else if (customName && customName.includes('Shadow')) {
             sealName = customName;
             palette = shadowPalette;
             dataOn = shadowOn;
             dataOff = shadowOff;
-            this._isShadow = true;
+            runeType = 'shadow';
         } else if (customName && (customName.includes('Guardian Key') || customName.includes('Ancient Key'))) {
             sealName = customName;
             palette = sunPalette;
@@ -234,7 +373,7 @@ export default class BooleanBulb extends Phaser.Physics.Arcade.Sprite {
             palette = flamePalette; // reuse warm tones
             dataOn = flameOn;
             dataOff = flameOff;
-            this._isFlame = true; // similar fire particles
+            runeType = 'flame'; // similar fire particles
         } else if (customName && customName.includes('Moon Seal')) {
             sealName = customName;
             palette = moonPalette;
@@ -262,6 +401,15 @@ export default class BooleanBulb extends Phaser.Physics.Arcade.Sprite {
 
         const textureKey = initialValue ? onKey : offKey;
         super(scene, x, y, textureKey);
+
+        // NOW we can safely access 'this' — super() has been called.
+        // Assign rune-type flags from the local variable determined above.
+        this._isFlame  = (runeType === 'flame');
+        this._isFrost  = (runeType === 'frost');
+        this._isShadow = (runeType === 'shadow');
+        this._isSacredKey = (runeType === 'sacredKey');
+        this._isBell   = (runeType === 'bell');
+        this._isShadowCurse = (runeType === 'shadowCurse');
 
         scene.add.existing(this);
         scene.physics.add.existing(this, true); // static body
@@ -322,6 +470,39 @@ export default class BooleanBulb extends Phaser.Physics.Arcade.Sprite {
                 frequency: 180,
                 emitting: false
             });
+        } else if (this._isSacredKey) {
+            this._particles = scene.add.particles(x, y, 'particle_pixel_1', {
+                lifespan: 1200,
+                speedY: { min: -10, max: -20 },
+                speedX: { min: -5, max: 5 },
+                scale: { start: 1, end: 0 },
+                tint: [0xffcc00, 0xffaa00, 0xffffff],
+                blendMode: 'ADD',
+                frequency: 250,
+                emitting: false
+            });
+        } else if (this._isBell) {
+            this._particles = scene.add.particles(x, y, 'particle_pixel_1', {
+                lifespan: 800,
+                speed: { min: 2, max: 8 },
+                angle: { min: 0, max: 360 },
+                scale: { start: 1.5, end: 0 },
+                tint: [0xddaa44, 0xffdd88],
+                blendMode: 'ADD',
+                frequency: 400,
+                emitting: false
+            });
+        } else if (this._isShadowCurse) {
+            this._particles = scene.add.particles(x, y, 'particle_pixel_1', {
+                lifespan: 1000,
+                speed: { min: 5, max: 20 },
+                angle: { min: 0, max: 360 },
+                scale: { start: 1.5, end: 0 },
+                tint: [0xff0000, 0x9933ff, 0x6600aa],
+                blendMode: 'ADD',
+                frequency: 150,
+                emitting: false
+            });
         }
 
         // Sync visual to initial state
@@ -350,6 +531,16 @@ export default class BooleanBulb extends Phaser.Physics.Arcade.Sprite {
     toggle() {
         this._value = !this._value;
         this._updateVisual();
+        
+        if (this._isFlame) SoundSynth.interact('flame');
+        else if (this._isFrost) SoundSynth.interact('frost');
+        else if (this._isShadow) SoundSynth.interact('shadow');
+        else if (this._isSacredKey) SoundSynth.interact('sacredKey');
+        else if (this._isBell) SoundSynth.interact('bell');
+        else if (this._isShadowCurse) SoundSynth.interact('shadowCurse');
+        else if (this._variable === 'P') SoundSynth.interact('sun');
+        else if (this._variable === 'Q') SoundSynth.interact('moon');
+        else SoundSynth.interact();
     }
 
     // ── Private ──────────────────────────────────────────

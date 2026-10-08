@@ -1,11 +1,12 @@
 export default class HUD {
-    constructor(scene) {
+    constructor(scene, levelIndex) {
         this.scene = scene;
         const width = scene.cameras.main.width;
 
         // Container to keep UI fixed to screen
         this.container = scene.add.container(0, 0);
         this.container.setScrollFactor(0); // This makes it a UI overlay!
+        this.container.setDepth(200);
 
         // Background for readability (pixel RPG style)
         const bg = scene.add.graphics();
@@ -16,16 +17,25 @@ export default class HUD {
         this.container.add(bg);
 
         // Dungeon Level Text
-        this.levelText = scene.add.text(20, 15, 'DUNGEON 1\n────────────────', {
+        const levelLabel = `DUNGEON ${levelIndex}\n────────────────`;
+        let levelColor = '#ffffff';
+        if (levelIndex === 2) levelColor = '#ff9933';
+        else if (levelIndex === 3) levelColor = '#ffcc00';
+
+        this.levelText = scene.add.text(20, 15, levelLabel, {
             fontSize: '16px',
-            fill: '#ffffff',
+            fill: levelColor,
             fontFamily: 'monospace'
         });
         this.container.add(this.levelText);
 
         // Objective Text
-        this.objectiveText = scene.add.text(width / 2, 15, 'OBJECTIVE\nActivate both seals', {
-            fontSize: '14px',
+        let objectiveLabel = 'OBJECTIVE\nActivate both seals';
+        if (levelIndex === 2) objectiveLabel = 'OBJECTIVE\nActivate Flame or Frost, keep Shadow dormant';
+        else if (levelIndex === 3) objectiveLabel = "OBJECTIVE\nFulfill the Guardian's Oath";
+
+        this.objectiveText = scene.add.text(width / 2, 15, objectiveLabel, {
+            fontSize: '13px',
             fill: '#dddddd',
             fontFamily: 'monospace',
             align: 'center'
@@ -41,15 +51,15 @@ export default class HUD {
         this.container.add(this.healthText);
 
         // Bulb state display (Phase 2A)
-        this.bulbStateText = scene.add.text(20, 50, '', {
-            fontSize: '14px',
+        this.bulbStateText = scene.add.text(20, 55, '', {
+            fontSize: '13px',
             fill: '#ffaa00',
             fontFamily: 'monospace'
         });
         this.container.add(this.bulbStateText);
 
         // Interaction hint
-        this.interactHint = scene.add.text(width / 2, 55, '', {
+        this.interactHint = scene.add.text(width / 2, 58, '', {
             fontSize: '12px',
             fill: '#88ff88',
             fontFamily: 'monospace',

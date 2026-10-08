@@ -11,7 +11,9 @@ import LogicEvaluator from '../logic/LogicEvaluator.js';
 import { getPuzzle } from '../puzzles/puzzleData.js';
 import { level1Data } from '../levels/level1.js';
 import { level2Data } from '../levels/level2.js';
+import { level3Data } from '../levels/level3.js';
 import { createPixelTexture } from '../utils/PixelArt.js';
+import { SoundSynth } from '../utils/SoundSynth.js';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -24,6 +26,8 @@ export default class GameScene extends Phaser.Scene {
             this.levelData = level1Data;
         } else if (this.levelIndex === 2) {
             this.levelData = level2Data;
+        } else if (this.levelIndex === 3) {
+            this.levelData = level3Data;
         } else {
             this.levelData = level1Data; // Default fallback
         }
@@ -261,10 +265,34 @@ export default class GameScene extends Phaser.Scene {
         ];
         createPixelTexture(this, 'torchTile', torchPalette, torchData, 3);
         
-        // Add torches symmetrically
-        this.add.sprite(200, 150, 'torchTile');
-        this.add.sprite(600, 150, 'torchTile');
-        this.add.sprite(400, 400, 'torchTile');
+        // Add torches — placement differs per level
+        if (this.levelIndex === 3) {
+            // Level 3 (The Guardian's Oath): torches on pillars
+            this.add.sprite(200, 250, 'torchTile');
+            this.add.sprite(800, 250, 'torchTile');
+            this.add.sprite(200, 600, 'torchTile');
+            this.add.sprite(800, 600, 'torchTile');
+        } else if (this.levelIndex === 2) {
+            // Level 2 (Elemental Forge): more torches for forge atmosphere
+            this.add.sprite(200, 150, 'torchTile');
+            this.add.sprite(600, 150, 'torchTile');
+            this.add.sprite(850, 200, 'torchTile');
+            this.add.sprite(200, 600, 'torchTile');
+            this.add.sprite(700, 730, 'torchTile');
+            this.add.sprite(400, 450, 'torchTile');
+        } else {
+            // Level 1: original positions — DO NOT CHANGE
+            this.add.sprite(200, 150, 'torchTile');
+            this.add.sprite(600, 150, 'torchTile');
+            this.add.sprite(400, 400, 'torchTile');
+        }
+
+        // Level specific theming overlay and decorations
+        if (this.levelIndex === 2) {
+            this._buildForgeDecorations();
+        } else if (this.levelIndex === 3) {
+            this._buildSanctuaryDecorations();
+        }
 
         // ── Exit area (behind the gate) ───────────────────
         this.exitArea = this.add.rectangle(
@@ -362,7 +390,7 @@ export default class GameScene extends Phaser.Scene {
         this.interactionRange = 60; // px — how close the player must be to interact
 
         // HUD (Overlay)
-        this.hud = new HUD(this);
+        this.hud = new HUD(this, this.levelIndex);
         this.hud.updateHealth(this.player.health);
         this._syncBulbHUD();
 
@@ -499,14 +527,19 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (result) {
+            SoundSynth.success();
             this.puzzleSolved = true;
             this._unlockGate();
+        } else {
+            SoundSynth.fail();
         }
     }
 
     /** Unlock the gate — remove its physics body so the player can pass. */
     _unlockGate() {
         if (!this.gate) return;
+        
+        SoundSynth.gateOpen();
 
         // 1. Lock glow brightens and rotates
         this.tweens.add({
@@ -584,5 +617,131 @@ export default class GameScene extends Phaser.Scene {
 
     reachExit() {
         this.scene.start('RoomCompleteScene', { level: this.levelIndex });
+    }
+
+    /**
+     * Build Level 2 elemental forge themed decorations.
+     * Called only when levelIndex === 2. Level 1 is completely untouched.
+     */
+    _buildForgeDecorations() {
+        // Warm amber overlay to give the room a forge-fire glow
+        const warmOverlay = this.add.rectangle(
+            this.levelData.width / 2,
+            this.levelData.height / 2,
+            this.levelData.width,
+            this.levelData.height,
+            0x331100,
+            0.18
+        );
+        warmOverlay.setDepth(0.5); // between floor and walls
+
+        // Forge glow point lights (fixed positions in the forge room)
+        this.add.pointlight(600, 450, 0xff6600, 120, 0.15, 0.03);
+        this.add.pointlight(250, 300, 0xff4400, 100, 0.12, 0.03);
+        this.add.pointlight(700, 550, 0x0088ff, 100, 0.12, 0.03); // Frost rune glow
+        this.add.pointlight(250, 650, 0x6600aa, 100, 0.10, 0.03); // Shadow rune glow
+
+        // Forge anvil centerpiece (drawn with graphics)
+        const forgeGfx = this.add.graphics();
+
+        // Forge base platform
+        forgeGfx.fillStyle(0x1a0a00, 1);
+        forgeGfx.fillRect(490, 430, 120, 60);
+        forgeGfx.fillStyle(0x3a1800, 1);
+        forgeGfx.fillRect(495, 425, 110, 10);
+
+        // Anvil top
+        forgeGfx.fillStyle(0x555566, 1);
+        forgeGfx.fillRect(510, 410, 80, 20);
+        forgeGfx.fillStyle(0x888899, 1);
+        forgeGfx.fillRect(512, 408, 76, 6);
+
+        // Glowing coals
+        forgeGfx.fillStyle(0xff4400, 0.9);
+        forgeGfx.fillRect(505, 445, 8, 8);
+        forgeGfx.fillRect(520, 448, 6, 6);
+        forgeGfx.fillRect(540, 443, 9, 9);
+        forgeGfx.fillRect(558, 447, 7, 7);
+        forgeGfx.fillRect(575, 444, 8, 8);
+
+        // Rune circle on the floor beneath the forge
+        forgeGfx.lineStyle(2, 0x6600aa, 0.4);
+        forgeGfx.strokeCircle(550, 460, 70);
+        forgeGfx.lineStyle(1, 0x9933ff, 0.3);
+        forgeGfx.strokeCircle(550, 460, 55);
+
+        // Ancient rune markings on the floor (simple cross pattern)
+        forgeGfx.lineStyle(1, 0x440066, 0.35);
+        forgeGfx.moveTo(550, 390);
+        forgeGfx.lineTo(550, 530);
+        forgeGfx.strokePath();
+        forgeGfx.moveTo(480, 460);
+        forgeGfx.lineTo(620, 460);
+        forgeGfx.strokePath();
+
+        // Forge label
+        this.add.text(550, 395, 'ELEMENTAL FORGE', {
+            fontSize: '10px',
+            fill: '#663300',
+            fontFamily: 'monospace',
+            align: 'center'
+        }).setOrigin(0.5);
+
+        // Pulsing forge light
+        const forgeCenterLight = this.add.pointlight(550, 450, 0xff5500, 80, 0.2, 0.05);
+        this.tweens.add({
+            targets: forgeCenterLight,
+            intensity: 0.35,
+            radius: 110,
+            duration: 1200,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+    }
+
+    /**
+     * Build Level 3 Guardian Sanctuary themed decorations.
+     */
+    _buildSanctuaryDecorations() {
+        // Ancient golden overlay to give the room a sacred sanctuary feel
+        const sacredOverlay = this.add.rectangle(
+            this.levelData.width / 2,
+            this.levelData.height / 2,
+            this.levelData.width,
+            this.levelData.height,
+            0x221100,
+            0.15
+        );
+        sacredOverlay.setDepth(0.5); // between floor and walls
+
+        // Guardian glow point lights (fixed positions in the sanctuary)
+        this.add.pointlight(250, 450, 0xffcc00, 120, 0.15, 0.03); // Sacred Key glow
+        this.add.pointlight(600, 200, 0xddaa44, 120, 0.15, 0.03); // Guardian Bell glow
+        this.add.pointlight(750, 450, 0x6600aa, 120, 0.15, 0.03); // Shadow Curse glow
+
+        // Sanctuary centerpiece (drawn with graphics)
+        const sanctuaryGfx = this.add.graphics();
+        
+        // Large ancient rune circle on the floor
+        sanctuaryGfx.lineStyle(2, 0xddaa44, 0.3);
+        sanctuaryGfx.strokeCircle(500, 450, 120);
+        sanctuaryGfx.lineStyle(1, 0xffcc00, 0.2);
+        sanctuaryGfx.strokeCircle(500, 450, 100);
+
+        // Connecting lines between runes
+        sanctuaryGfx.lineStyle(1, 0x997722, 0.2);
+        sanctuaryGfx.moveTo(250, 450);
+        sanctuaryGfx.lineTo(380, 450);
+        sanctuaryGfx.strokePath();
+
+        sanctuaryGfx.moveTo(600, 200);
+        sanctuaryGfx.lineTo(550, 340);
+        sanctuaryGfx.strokePath();
+        
+        sanctuaryGfx.lineStyle(1, 0x440066, 0.2);
+        sanctuaryGfx.moveTo(750, 450);
+        sanctuaryGfx.lineTo(620, 450);
+        sanctuaryGfx.strokePath();
     }
 }
